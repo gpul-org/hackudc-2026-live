@@ -445,7 +445,7 @@ function ScheduleCard({ item, isActive }: ScheduleCardProps) {
         <div className="mt-2 flex flex-col items-start gap-1 text-[11px] text-neutral-400">
           <span className="inline-flex items-center gap-1.5">
             <MapPin className="h-3 w-3 text-neutral-600 shrink-0" />
-            <span className="truncate max-w-[9rem]">{item.location}</span>
+            <span className="truncate max-w-36">{item.location}</span>
           </span>
           {relativeTimeLabel ? <span>{relativeTimeLabel}</span> : null}
         </div>

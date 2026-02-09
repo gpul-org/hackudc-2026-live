@@ -3,6 +3,21 @@ import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration }
 import type { Route } from './+types/root'
 import './app.css'
 
+export const meta: Route.MetaFunction = () => [
+  { title: 'HackUDC 2026 · Live' },
+  {
+    name: 'description',
+    content: 'Live dashboard for HackUDC 2026 with schedule, challenges, mentors, Wi‑Fi info, and quick links.'
+  },
+  { property: 'og:title', content: 'HackUDC 2026 · Live' },
+  {
+    property: 'og:description',
+    content: 'Stay up to date during HackUDC 2026: hacking countdown, schedule, challenges, mentors, Wi‑Fi, and more.'
+  },
+  { property: 'og:image', content: '/og-image.png' },
+  { property: 'og:type', content: 'website' }
+]
+
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {

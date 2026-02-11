@@ -60,6 +60,7 @@ const markdownComponents = {
 }
 
 const DIRECTUS_URL = import.meta.env.VITE_DIRECTUS_URL
+const DISPLAY_TIME_ZONE = 'Europe/Madrid' // CET (GMT+1)
 
 function getAssetUrl(id?: string | null) {
   if (!id) return ''
@@ -105,10 +106,11 @@ async function fetchTvData(): Promise<TvData> {
 
 function formatClockTime(date: Date | null) {
   if (!date) return '--:--'
-  return date.toLocaleTimeString(undefined, {
+  return date.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: false,
+    timeZone: DISPLAY_TIME_ZONE
   })
 }
 
@@ -361,15 +363,17 @@ interface ScheduleCardProps {
 }
 
 function ScheduleCard({ item, isActive }: ScheduleCardProps) {
-  const startLabel = item.startDate.toLocaleTimeString(undefined, {
+  const startLabel = item.startDate.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: false,
+    timeZone: DISPLAY_TIME_ZONE
   })
-  const endLabel = item.endDate.toLocaleTimeString(undefined, {
+  const endLabel = item.endDate.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false
+    hour12: false,
+    timeZone: DISPLAY_TIME_ZONE
   })
 
   const durationMs = item.endDate.getTime() - item.startDate.getTime()

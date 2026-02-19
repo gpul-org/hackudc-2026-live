@@ -1,7 +1,7 @@
 import { Link } from 'react-router'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Calendar, Trophy, Users } from 'lucide-react'
+import { Calendar, Trophy, Users, MapPin, ExternalLink } from 'lucide-react'
 import { readSingleton } from '@directus/sdk'
 import directus from '../lib/directus'
 import {
@@ -84,6 +84,19 @@ function StayConnected({ wifi }: { wifi: WifiInfo | null }) {
             className="text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300"
           >
             discord.gg/catyMZrF
+          </a>
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-[11px] font-semibold uppercase text-slate-500">Venue</span>
+          <a
+            href="/MAPA_FIC_HACKUDC.pdf"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          >
+            <MapPin className="w-4 h-4 shrink-0" />
+            View map
+            <ExternalLink className="w-3.5 h-3.5 shrink-0 opacity-70" />
           </a>
         </div>
         <div className="flex flex-col gap-1.5">

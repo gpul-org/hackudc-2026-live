@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Clock, MapPin, Tag } from 'lucide-react'
+import { Clock, MapPin, Tag, Wifi } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { readItems, readSingleton } from '@directus/sdk'
 import directus from '../lib/directus'
 
@@ -589,20 +590,31 @@ interface WifiAndOrganizerProps {
 }
 
 function WifiAndOrganizer({ wifi }: WifiAndOrganizerProps) {
+  const qrValue = wifi ? `WIFI:T:WPA;S:${wifi.ssid};P:${wifi.password};;` : null
   return (
     <section className="border-t border-neutral-900 pt-5 flex items-center justify-between gap-6 text-sm">
-      <div className="flex flex-col gap-1">
-        <span className="font-semibold tracking-[0.25em] uppercase text-neutral-400 text-xs">Wi-Fi</span>
-        {wifi ? (
-          <>
-            <span className="text-lg text-neutral-100">{wifi.ssid}</span>
-            <span className="text-sm text-neutral-300 mt-1">
-              Password: <span className="font-mono tracking-wide text-neutral-50">{wifi.password}</span>
-            </span>
-          </>
-        ) : (
-          <span className="text-neutral-500">Wi-Fi info</span>
-        )}
+      <div className="flex items-center gap-5">
+        {qrValue ? (
+          <div className="rounded-lg overflow-hidden bg-white p-2 shrink-0">
+            <QRCodeSVG value={qrValue} size={112} />
+          </div>
+        ) : null}
+        <div className="flex flex-col gap-1">
+          <span className="inline-flex items-center gap-1.5 font-semibold tracking-[0.25em] uppercase text-neutral-400 text-xs">
+            <Wifi className="h-3.5 w-3.5" />
+            Wi-Fi
+          </span>
+          {wifi ? (
+            <>
+              <span className="text-lg text-neutral-100">{wifi.ssid}</span>
+              <span className="text-sm text-neutral-300 mt-0.5">
+                Password: <span className="font-mono tracking-wide text-neutral-50">{wifi.password}</span>
+              </span>
+            </>
+          ) : (
+            <span className="text-neutral-500">Wi-Fi info</span>
+          )}
+        </div>
       </div>
       <div className="flex flex-col items-end gap-1">
         <span className="font-semibold tracking-[0.25em] uppercase text-neutral-400 text-xs">Organized by</span>

@@ -1,7 +1,8 @@
 import { Link } from 'react-router'
 import { useEffect, useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import { Calendar, Trophy, Users, MapPin, ExternalLink } from 'lucide-react'
+import { Calendar, Trophy, Users, MapPin, ExternalLink, Wifi } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 import { readSingleton } from '@directus/sdk'
 import directus from '../lib/directus'
 import {
@@ -61,103 +62,124 @@ function CountdownSection({ hacking, now }: { hacking: HackingTime | null; now: 
 }
 
 function StayConnected({ wifi }: { wifi: WifiInfo | null }) {
+  const qrValue = wifi?.ssid ? `WIFI:T:WPA;S:${wifi.ssid};P:${wifi.password};;` : null
   return (
     <section className="rounded-xl border border-neutral-800 bg-neutral-900/80 p-6 md:p-8">
       <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-6">Stay connected</h2>
-      <div className="flex flex-wrap gap-10 md:gap-12">
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase text-slate-500">Wi‑Fi</span>
-          {wifi ? (
+      <div className="flex flex-col md:flex-row md:items-start gap-8 md:gap-10 md:w-fit md:m-auto">
+        <div className="flex flex-col items-center gap-5 self-center md:self-auto md:flex-row md:items-center md:gap-10 md:shrink-0">
+          {qrValue ? (
             <>
-              <span className="text-base md:text-lg font-semibold text-slate-100">{wifi.ssid}</span>
-              <span className="text-sm text-slate-400">Password: {wifi.password}</span>
+              <div className="rounded-xl bg-white p-3 shadow-lg md:hidden">
+                <QRCodeSVG value={qrValue} size={200} />
+              </div>
+              <div className="rounded-xl bg-white p-3 shadow-lg hidden md:block">
+                <QRCodeSVG value={qrValue} size={160} />
+              </div>
             </>
-          ) : (
-            <span className="text-slate-500">—</span>
-          )}
+          ) : null}
+          <div className="flex flex-col gap-2 items-center md:items-start">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              <Wifi className="h-3.5 w-3.5 shrink-0" />
+              Wi‑Fi
+            </span>
+            {wifi ? (
+              <>
+                <span className="text-xl md:text-2xl font-semibold text-slate-100 leading-tight">{wifi.ssid}</span>
+                <div className="flex flex-col gap-0.5 items-center md:items-start">
+                  <span className="text-[11px] uppercase tracking-[0.12em] text-slate-500">Password</span>
+                  <span className="text-base font-mono text-slate-200">{wifi.password}</span>
+                </div>
+              </>
+            ) : (
+              <span className="text-slate-500">—</span>
+            )}
+          </div>
         </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase text-slate-500">Discord</span>
-          <a
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300"
-          >
-            {DISCORD_URL.replace(/^https?:\/\//, '')}
-          </a>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase text-slate-500">Venue</span>
-          <a
-            href="/MAPA_FIC_HACKUDC.pdf"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1.5 text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
-          >
-            <MapPin className="w-4 h-4 shrink-0" />
-            View map
-            <ExternalLink className="w-3.5 h-3.5 shrink-0 opacity-70" />
-          </a>
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <span className="text-[11px] font-semibold uppercase text-slate-500">Social</span>
-          <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex flex-col gap-5 w-full border-t border-neutral-800 pt-6 md:w-auto md:border-t-0 md:pt-0 md:border-l md:border-neutral-800 md:pl-10">
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[11px] font-semibold uppercase text-slate-500">Discord</span>
             <a
-              href={SOCIAL_MASTODON}
+              href={DISCORD_URL}
               target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-slate-300 transition-colors"
-              aria-label="Mastodon"
+              rel="noreferrer"
+              className="text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 640 640" aria-hidden>
-                <path d="m 619.10911,209.93288 c 0,-139.109896 -91.16564,-179.898291 -91.16564,-179.898291 -89.44824,-41.07463 -327.16587,-40.645279 -415.7554,0 0,0 -91.165647,40.788395 -91.165647,179.898291 0,165.58658 -9.445734,371.24596 151.131737,413.75176 57.96246,15.31354 107.76724,18.60523 147.84005,16.31536 72.70352,-4.00728 113.49192,-25.90421 113.49192,-25.90421 l -2.43299,-52.81024 c 0,0 -51.95154,16.31536 -110.34335,14.45484 -57.81934,-2.00364 -118.78725,-6.29716 -128.23299,-77.28328 -0.8587,-6.58339 -1.28805,-13.3099 -1.28805,-19.89329 122.5083,29.91149 227.12696,13.02367 255.75039,9.58885 80.28874,-9.58885 150.27304,-59.10739 159.14631,-104.33242 14.02548,-71.27235 12.88054,-173.88737 12.88054,-173.88737 z m -107.481,179.18271 H 444.9355 V 225.67577 c 0,-71.12924 -91.59499,-73.84846 -91.59499,9.87509 v 89.44823 h -66.26325 v -89.44823 c 0,-83.72355 -91.595,-81.00433 -91.595,-9.87509 v 163.43982 h -66.83572 c 0,-174.74608 -7.44209,-211.67031 26.33356,-250.45506 37.06735,-41.360868 114.20751,-44.080094 148.55563,8.73014 l 16.60159,27.90785 16.6016,-27.90785 c 34.49124,-53.096469 111.77451,-49.804774 148.55563,-8.73014 33.91877,39.07099 26.33356,75.8521 26.33356,250.45506 z" />
-              </svg>
+              {DISCORD_URL.replace(/^https?:\/\//, '')}
             </a>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[11px] font-semibold uppercase text-slate-500">Venue</span>
             <a
-              href={SOCIAL_BSKY}
+              href="/MAPA_FIC_HACKUDC.pdf"
               target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-slate-300 transition-colors"
-              aria-label="Bluesky"
+              rel="noreferrer"
+              className="flex items-center gap-1.5 text-base md:text-lg font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
             >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 600 530" aria-hidden>
-                <path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z" />
-              </svg>
+              <MapPin className="w-4 h-4 shrink-0" />
+              View map
+              <ExternalLink className="w-3.5 h-3.5 shrink-0 opacity-70" />
             </a>
-            <a
-              href={SOCIAL_LINKEDIN}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-slate-300 transition-colors"
-              aria-label="LinkedIn"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
-            </a>
-            <a
-              href={SOCIAL_X}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-slate-300 transition-colors"
-              aria-label="X (Twitter)"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-            </a>
-            <a
-              href={SOCIAL_INSTAGRAM}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-slate-300 transition-colors"
-              aria-label="Instagram"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
-                <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.75A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4h-8.5zm8.9 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5z" />
-              </svg>
-            </a>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[11px] font-semibold uppercase text-slate-500">Social</span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <a
+                href={SOCIAL_MASTODON}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                aria-label="Mastodon"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 640 640" aria-hidden>
+                  <path d="m 619.10911,209.93288 c 0,-139.109896 -91.16564,-179.898291 -91.16564,-179.898291 -89.44824,-41.07463 -327.16587,-40.645279 -415.7554,0 0,0 -91.165647,40.788395 -91.165647,179.898291 0,165.58658 -9.445734,371.24596 151.131737,413.75176 57.96246,15.31354 107.76724,18.60523 147.84005,16.31536 72.70352,-4.00728 113.49192,-25.90421 113.49192,-25.90421 l -2.43299,-52.81024 c 0,0 -51.95154,16.31536 -110.34335,14.45484 -57.81934,-2.00364 -118.78725,-6.29716 -128.23299,-77.28328 -0.8587,-6.58339 -1.28805,-13.3099 -1.28805,-19.89329 122.5083,29.91149 227.12696,13.02367 255.75039,9.58885 80.28874,-9.58885 150.27304,-59.10739 159.14631,-104.33242 14.02548,-71.27235 12.88054,-173.88737 12.88054,-173.88737 z m -107.481,179.18271 H 444.9355 V 225.67577 c 0,-71.12924 -91.59499,-73.84846 -91.59499,9.87509 v 89.44823 h -66.26325 v -89.44823 c 0,-83.72355 -91.595,-81.00433 -91.595,-9.87509 v 163.43982 h -66.83572 c 0,-174.74608 -7.44209,-211.67031 26.33356,-250.45506 37.06735,-41.360868 114.20751,-44.080094 148.55563,8.73014 l 16.60159,27.90785 16.6016,-27.90785 c 34.49124,-53.096469 111.77451,-49.804774 148.55563,-8.73014 33.91877,39.07099 26.33356,75.8521 26.33356,250.45506 z" />
+                </svg>
+              </a>
+              <a
+                href={SOCIAL_BSKY}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                aria-label="Bluesky"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 600 530" aria-hidden>
+                  <path d="m135.72 44.03c66.496 49.921 138.02 151.14 164.28 205.46 26.262-54.316 97.782-155.54 164.28-205.46 47.98-36.021 125.72-63.892 125.72 24.795 0 17.712-10.155 148.79-16.111 170.07-20.703 73.984-96.144 92.854-163.25 81.433 117.3 19.964 147.14 86.092 82.697 152.22-122.39 125.59-175.91-31.511-189.63-71.766-2.514-7.3797-3.6904-10.832-3.7077-7.8964-0.0174-2.9357-1.1937 0.51669-3.7077 7.8964-13.714 40.255-67.233 197.36-189.63 71.766-64.444-66.128-34.605-132.26 82.697-152.22-67.108 11.421-142.55-7.4491-163.25-81.433-5.9562-21.282-16.111-152.36-16.111-170.07 0-88.687 77.742-60.816 125.72-24.795z" />
+                </svg>
+              </a>
+              <a
+                href={SOCIAL_LINKEDIN}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                aria-label="LinkedIn"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                </svg>
+              </a>
+              <a
+                href={SOCIAL_X}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                aria-label="X (Twitter)"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+              </a>
+              <a
+                href={SOCIAL_INSTAGRAM}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-slate-300 transition-colors"
+                aria-label="Instagram"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                  <path d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2zm0 1.75A4 4 0 0 0 3.75 7.75v8.5a4 4 0 0 0 4 4h8.5a4 4 0 0 0 4-4v-8.5a4 4 0 0 0-4-4h-8.5zm8.9 1.35a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10zm0 1.75a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5z" />
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -248,7 +270,7 @@ export default function Index() {
   return (
     <div className="min-h-screen text-slate-50 font-sans flex flex-col">
       <Header now={now} />
-      <main className="flex-1 px-4 md:px-12 pb-12 md:pb-16 max-w-4xl mx-auto w-full space-y-8 md:space-y-10">
+      <main className="flex-1 px-4 md:px-12 pb-12 md:pb-16 max-w-4xl mx-auto w-full space-y-8 md:space-y-10 ">
         <CountdownSection hacking={data.hacking} now={now} />
         <StayConnected wifi={data.wifi} />
         <AnnouncementBanner announcement={data.announcement} />

@@ -193,6 +193,33 @@ export default function Schedule() {
     return timedSchedule.filter((item) => item.tags?.some((tag) => tag.trim().toLowerCase() === selectedTag))
   }, [selectedTag, timedSchedule])
 
+  const scheduleByDay = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long'
+    })
+
+    const groups: Array<{ key: string; label: string; items: TimedScheduleItem[] }> = []
+    for (const item of filteredSchedule) {
+      const timestamp = item.startDate.getTime()
+      const isValidDate = Number.isFinite(timestamp)
+      const key = isValidDate
+        ? `${item.startDate.getFullYear()}-${String(item.startDate.getMonth() + 1).padStart(2, '0')}-${String(item.startDate.getDate()).padStart(2, '0')}`
+        : `unknown-${item.id}`
+      const existing = groups.length > 0 ? groups[groups.length - 1] : null
+      if (existing && existing.key === key) {
+        existing.items.push(item)
+        continue
+      }
+
+      const label = isValidDate ? formatter.format(item.startDate) : 'Unscheduled'
+      groups.push({ key, label, items: [item] })
+    }
+
+    return groups
+  }, [filteredSchedule])
+
   useEffect(() => {
     if (selectedTag === 'all') return
     const exists = availableTags.some((tag) => tag.key === selectedTag)
@@ -287,9 +314,19 @@ export default function Schedule() {
             </div>
           ) : null}
         </div>
-        <div className="space-y-3">
-          {filteredSchedule.map((item) => (
-            <ScheduleCard key={item.id} item={item} isActive={item.status === 'live'} now={now} />
+        <div className="space-y-6">
+          {scheduleByDay.map((dayGroup) => (
+            <section key={dayGroup.key} className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  {dayGroup.label}
+                </span>
+                <div className="h-px flex-1 bg-neutral-800" />
+              </div>
+              {dayGroup.items.map((item) => (
+                <ScheduleCard key={item.id} item={item} isActive={item.status === 'live'} now={now} />
+              ))}
+            </section>
           ))}
         </div>
         {filteredSchedule.length === 0 && !isLoading ? (
